@@ -120,11 +120,11 @@ function LockSection({ color, onClick, reverse, row }) {
                   classes.numberContent,
                   !fiveXLocked && disabled[i] && !selected && classes.disabledNumberContent)}>
                   {selected 
-                    ? <span className={classes.x}>X</span>
+                    ? isLock
+                      ? <LockIcon className={classes.lock} />
+                      : <span className={classes.x}>X</span>
                     : isLock
-                      ? disabled[i]
-                        ? <LockIcon className={classes.lock} />
-                        : <OpenLockIcon className={classes.openLock} />
+                      ? <OpenLockIcon className={classes.openLock} />
                       : reverse
                         ? marks.length - i
                         : i + 2

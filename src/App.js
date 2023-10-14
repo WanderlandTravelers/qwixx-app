@@ -3,15 +3,12 @@ import cloneDeep from 'lodash.clonedeep';
 import { Paper } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles';
 
-import AppBar from './components/AppBar';
 import ColorRows from './components/ColorRows';
-import DiceRow from './components/DiceRow';
-import ScoreRow from './components/ScoreRow';
 import StrikesRow from './components/StrikesRow';
 
 const scoring = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78];
 const gameWidth = 1000;
-const gameHeight = 694; // calculated after rendering and here for reference
+const gameHeight = 405; // calculated after rendering and here for reference
 
 const styles = (theme) => ({
   cardTitleRow: {
@@ -66,7 +63,6 @@ const styles = (theme) => ({
     right: 0,
     width: gameWidth,
     margin: 'auto',
-    marginTop: 80,
   },
   paper: {
     backgroundColor: theme.palette.grey.light,
@@ -82,31 +78,31 @@ const diceIndex = { red: 2, yellow: 3, green: 4, blue: 5 };
 const blankState = {
   blue: [
     new Array(12).fill(false),
-    [false, false, false, false, false, false, false, false, false, false, true, true]
+    [false, false, false, false, false, false, false, false, false, false, true, false]
   ],
   blueScore: 0,
   disabledDice: new Array(6).fill(false),
   green: [
     new Array(12).fill(false),
-    [false, false, false, false, false, false, false, false, false, false, true, true]
+    [false, false, false, false, false, false, false, false, false, false, true, false]
   ],
   greenScore: 0,
   red: [
     new Array(12).fill(false),
-    [false, false, false, false, false, false, false, false, false, false, true, true]
+    [false, false, false, false, false, false, false, false, false, false, true, false]
   ],
   redScore: 0,
-  showBlue: false, 
-  showFinal: false,
-  showGreen: false, 
-  showRed: false, 
-  showStrikes: false,
-  showYellow: false,
+  showBlue: true, 
+  showFinal: true,
+  showGreen: true, 
+  showRed: true, 
+  showStrikes: true,
+  showYellow: true,
   strikes: new Array(4).fill(false),
   strikesScore: 0,
   yellow: [
     new Array(12).fill(false),
-    [false, false, false, false, false, false, false, false, false, false, true, true]
+    [false, false, false, false, false, false, false, false, false, false, true, false]
   ],
   yellowScore: 0,
 }
@@ -155,16 +151,17 @@ class QuixxScoreCard extends Component {
     let scaler = 1;
 
     // do we even need to scale?
-    if (windowHeight < gameHeight || windowWidth < gameWidth) {
-      const scalerH = windowHeight / gameHeight;
-      const scalerW = windowWidth / gameWidth;
+    console.log(windowHeight);
+    console.log(gameHeight);
 
-      // take the smaller scaler because that one is more important
-      scaler = scalerH < scalerW ? scalerH : scalerW
+    const scalerH = windowHeight / gameHeight;
+    const scalerW = windowWidth / gameWidth;
 
-      // shrink just a little to add some padding around the edges
-      scaler = scaler * 0.98;
-    }
+    // take the smaller scaler because that one is more important
+    scaler = scalerH < scalerW ? scalerH : scalerW
+
+    // shrink just a little to add some padding around the edges
+    scaler = scaler * 0.98;
 
     return scaler;
   }
@@ -198,13 +195,13 @@ class QuixxScoreCard extends Component {
     marks[index] = !marks[index];
 
     // calculate new score
-    const numMarks = marks.filter(value => value).length;
+    const numMarks = marks.filter(value => value).length - (marks[11] && !marks[10] ? 1 : 0);
     const score = scoring[numMarks];
 
     // disable all before the index and enable all after
     disabled = disabled.map((element, i) => {
       // Check lock section first, then check the rest
-      return (i >= marks.length - 2 && numMarks < 5) || i < marks.lastIndexOf(true);
+      return (i === marks.length - 2 && numMarks < 5) || i < marks.lastIndexOf(true);
     });
 
     this.setState({
@@ -232,8 +229,9 @@ class QuixxScoreCard extends Component {
     });
   }
 
-  handleReset = () => {
-    if (window.confirm('Are you sure you want to reset the card?')) {
+  handleReset = (e, skipConfirm) => {
+    if (skipConfirm || window.confirm('Are you sure you want to reset the card?'))
+    {
       this.setState(cloneDeep(blankState));
     }
   }
@@ -272,16 +270,15 @@ class QuixxScoreCard extends Component {
     const { classes } = this.props;
     const {
       blueScore = 0,
-      disabledDice,
       greenScore = 0,
       redScore = 0,
       scaler = 1,
       showBlue,
-      showFinal,
       showGreen,
       showRed,
-      showStrikes,
       showYellow,
+      showFinal,
+      showStrikes,
       strikes,
       strikesScore = 0,
       yellowScore = 0,
@@ -292,54 +289,39 @@ class QuixxScoreCard extends Component {
       wrapperStyles = {
         transform: `translate(-50%) scale(${scaler})`,
         left: `50%`,
-        marginTop: 80 - (gameHeight - (gameHeight * scaler)) / 2
+        marginTop: 8 - (gameHeight - (gameHeight * scaler)) / 2
       };
     };
 
     return (
       <>
-        <AppBar onReset={this.handleReset} />
         <div 
           id='game-wrapper'
           className={classes.gameWrapper}
           style={wrapperStyles}
         >
-          <DiceRow 
-            disabledDice={disabledDice}
-            toggleDisabled={this.toggleDisabled}
+          <ColorRows {...this.state}
+            onClick={this.handleClick}
+            showBlue={showBlue}
+            showGreen={showGreen}
+            showRed={showRed}
+            showYellow={showYellow}
+            blueScore={blueScore}
+            greenScore={greenScore}
+            redScore={redScore}
+            yellowScore={yellowScore}
+            revealScore={(score) => this.setState({ [score]: !this.state[score] })}
           />
-          <Paper className={classes.paper}>
-            <div className={classes.cardTitleRow}>
-              <div className={classes.cardTitle}>QWIXX</div>
-              <div className={classes.cardSubTitle}>GAMEWRIGHT</div>
-              <div className={classes.fiveXTop}>At least 5 X's</div>
-            </div>
-            <ColorRows {...this.state} onClick={this.handleClick} />
-            <div className={classes.fiveXBottom}></div>
-            <StrikesRow
-              scoring={scoring}
-              strikes={strikes}
-              onClick={(i) => this.handleClickStrikes(i)}
-            />
-            <ScoreRow
-              showBlue={showBlue}
-              showGreen={showGreen}
-              showRed={showRed}
-              showStrikes={showStrikes}
-              showYellow={showYellow}
-              showFinal={showFinal}
-              greenScore={greenScore}
-              blueScore={blueScore}
-              redScore={redScore}
-              strikesScore={strikesScore}
-              yellowScore={yellowScore}
-              revealScore={(score) => this.setState({ [score]: !this.state[score] })}
-            />
-          </Paper>
-          <div className={classes.disclaimer}>
-            QWIXX is a trademark of <a href='https://gamewright.com'>Gamewright</a>, a division of Ceaco, Inc.
-            This app has been created as a passion project by <a href='https://sutherlandon.com'>Sutherlandon</a>
-          </div>
+          <StrikesRow
+            strikes={strikes}
+            onReset={this.handleReset}
+            onClick={(i) => this.handleClickStrikes(i)}
+            showFinal={showFinal}
+            showStrikes={showStrikes}
+            totalScore={redScore + yellowScore + greenScore + blueScore - strikesScore}
+            strikesScore={-strikesScore}
+            revealScore={(score) => this.setState({ [score]: !this.state[score] })}
+          />
         </div>
       </>
     );
