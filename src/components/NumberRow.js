@@ -7,9 +7,9 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyles = (color, lockSection) => makeStyles((theme) => ({
   row: {
+    width: '100%',
     backgroundColor: theme.palette[color].main,
     borderRadius: theme.spacing(),
-    marginBottom: theme.spacing(2),
     padding: theme.spacing(),
   },
   number: {

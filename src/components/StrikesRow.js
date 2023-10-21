@@ -1,8 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, useMediaQuery } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { useTheme } from '@material-ui/core/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faRedo, faCircleStop, faTrophy } from '@fortawesome/free-solid-svg-icons';
 
@@ -31,15 +30,19 @@ const useStyles = makeStyles((theme) => {
       textAlign: 'center',
     },
     stop: {
+      color: 'white',
       marginRight: theme.spacing(2),
     },
     reset: {
+      color: 'white',
       marginRight: theme.spacing(2),
     },
     history: {
+      color: 'white',
       marginRight: theme.spacing(2),
     },
     minusIcon: {
+      color: 'white',
       marginLeft: theme.spacing(30),
     },
     strike: {
@@ -92,31 +95,14 @@ const useStyles = makeStyles((theme) => {
 });
 
 function StrikesRow(props) {
-  const { onClick, onReset, strikes, showStrikes, showFinal, revealScore, strikesScore, totalScore } = props;
-  const [open, setOpen] = React.useState(false);
+  const { onClick, onReset, onEndGame, strikes, showStrikes, showFinal, revealScore, strikesScore, totalScore } = props;
   const classes = useStyles();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const handleEndGame = () => {
-    setOpen(true);
-  };
-
-  const recordScore = (e, won) => {
-    setOpen(false);
-    const scores = JSON.parse(localStorage.getItem("scores") || '[]');
-    scores.push({'date': (new Date()).toISOString(), 'score': totalScore, 'won': won});
-    localStorage.setItem('scores', JSON.stringify(scores));
-    onReset(e, true);
-  };
-  const handleLoss = (e) => recordScore(e, false);
-  const handleWin = (e) => recordScore(e, true);
 
   return (
     <Grid container justify='space-between' alignItems='center' wrap='nowrap' className={classes.row}>
       <Grid item className={classes.strikesContainer}>
         <Grid container spacing={1} justify='space-around' alignItems='center' wrap='nowrap'>
-          <FontAwesomeIcon icon={faCircleStop} className={classes.stop} onClick={handleEndGame} />
+          <FontAwesomeIcon icon={faCircleStop} className={classes.stop} onClick={onEndGame} />
           <FontAwesomeIcon icon={faRedo} className={classes.reset} onClick={onReset} />
           <FontAwesomeIcon icon={faTrophy} className={classes.history}/>
           <FontAwesomeIcon icon={faMinus} className={classes.minusIcon}/>
@@ -154,28 +140,6 @@ function StrikesRow(props) {
           </Grid>
         </Grid>
       </Grid>
-
-      <Dialog
-        fullScreen={fullScreen}
-        open={open}
-        onClose={() => setOpen(false)}
-        aria-labelledby="responsive-dialog-title"
-      >
-        <DialogTitle id="responsive-dialog-title">{"Game Over"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Did you win?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleLoss} color="primary">
-            No
-          </Button>
-          <Button onClick={handleWin} color="primary" autoFocus>
-            Yes!
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Grid>
   );
 }

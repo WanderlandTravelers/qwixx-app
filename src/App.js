@@ -1,26 +1,13 @@
 import React, { Component } from 'react';
 import cloneDeep from 'lodash.clonedeep';
-import { Paper } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, useMediaQuery } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles';
-
-import ColorRows from './components/ColorRows';
+import { useTheme } from '@material-ui/core/styles';
+import ColorRow from './components/ColorRow';
 import StrikesRow from './components/StrikesRow';
 
 const scoring = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78];
-const gameWidth = 1000;
-const gameHeight = 405; // calculated after rendering and here for reference
-
 const styles = (theme) => ({
-  cardTitleRow: {
-    display: 'flex',
-    alignItems: 'flex-end',
-  },
-  cardTitle: {
-    color: theme.palette.grey.dark,
-    display: 'inline-block',
-    fontWeight: 'bold',
-    marginRight: theme.spacing(4),
-  },
   cardSubTitle: {
     color: theme.palette.grey.main,
     display: 'inline-block',
@@ -57,20 +44,10 @@ const styles = (theme) => ({
     marginTop: -theme.spacing(2),
     width: 130,
   },
-  gameWrapper: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    width: gameWidth,
-    margin: 'auto',
-  },
-  paper: {
-    backgroundColor: theme.palette.grey.light,
-    padding: theme.spacing(2),
-    paddingTop: theme.spacing(2),
-    marginLeft: theme.spacing(4),
-    marginRight: theme.spacing(4),
-    marginBottom: theme.spacing(),
+  game: {
+    backgroundColor: '#282c34',
+    height: '100%',
+    paddingBottom: `env(safe-area-inset-bottom)`,
   },
 });
 
@@ -82,6 +59,7 @@ const blankState = {
   ],
   blueScore: 0,
   disabledDice: new Array(6).fill(false),
+  endGameDialogOpen: false,
   green: [
     new Array(12).fill(false),
     [false, false, false, false, false, false, false, false, false, false, true, false]
@@ -109,69 +87,29 @@ const blankState = {
 
 class QuixxScoreCard extends Component {
   state = cloneDeep(blankState);
-  startingGameWidth = gameWidth;
-  startingGameHeight = gameHeight;
 
   componentDidMount() {
     // if there is a saved state, reload it
-    let savedState = localStorage.getItem('QwixxAppState');
+    let savedState = localStorage.getItem('QwixxState');
     if (savedState) {
       savedState = JSON.parse(savedState);
-      localStorage.removeItem('QwixxAppState');
+      localStorage.removeItem('QwixxState');
       this.setState(savedState);
     }
-
+    
     // save the state if the user navagates away or refreshes
     window.addEventListener('pagehide', () => {
       console.log('saving state');
-      localStorage.setItem('QwixxAppState', JSON.stringify(this.state));
+      localStorage.setItem('QwixxState', JSON.stringify(this.state));
     });
-
-    // Rescale the card to fit on the screen if the size of the screen changes
-    window.addEventListener('resize', () => {
-      this.setState({ scaler: this.getScaler() });
-    });
-
-    // set the initial scaler for the game
-    this.setState({ scaler: this.getScaler() });
   }
-
-  /**
-   * Calculates a scale factor for how to scale the card and dice so they
-   * always fit on the screen regardless of orientation. Scaler is always 1
-   * unless the height < width, then we scale based on the height of the screen
-   */
-  getScaler = () => {
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-    //const gameHeight = document.getElementById('game-wrapper').clientHeight;
-    const gameHeight = this.startingGameHeight;
-
-    // scaler starts at 1 which means no scaling needed
-    let scaler = 1;
-
-    // do we even need to scale?
-    console.log(windowHeight);
-    console.log(gameHeight);
-
-    const scalerH = windowHeight / gameHeight;
-    const scalerW = windowWidth / gameWidth;
-
-    // take the smaller scaler because that one is more important
-    scaler = scalerH < scalerW ? scalerH : scalerW
-
-    // shrink just a little to add some padding around the edges
-    scaler = scaler * 0.98;
-
-    return scaler;
-  }
-
+  
   /**
    * Handles clicks for the colored number rows
    * @param {String} color The color of the row
    * @param {Number} index The index of the clicked square
    * @param {Boolean} isLock Whether or not the square clicked is a lock
-   */
+  */
   handleClick = (color, index, isLock) => {
     const { disabledDice } = this.state;
     let [marks, disabled] = this.state[color];
@@ -268,11 +206,16 @@ class QuixxScoreCard extends Component {
 
   render() {
     const { classes } = this.props;
+    // const theme = useTheme();
+    // const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const {
+      red,
+      yellow,
+      green,
+      blue,
       blueScore = 0,
       greenScore = 0,
       redScore = 0,
-      scaler = 1,
       showBlue,
       showGreen,
       showRed,
@@ -282,50 +225,109 @@ class QuixxScoreCard extends Component {
       strikes,
       strikesScore = 0,
       yellowScore = 0,
+      endGameDialogOpen,
     } = this.state;
 
-    let wrapperStyles;
-    if (scaler !== 1) {
-      wrapperStyles = {
-        transform: `translate(-50%) scale(${scaler})`,
-        left: `50%`,
-        marginTop: 8 - (gameHeight - (gameHeight * scaler)) / 2
-      };
+    const getTotalScore = () => redScore + yellowScore + greenScore + blueScore - strikesScore;
+  
+    const handleLoss = (e) => handleRecordScore(e, false);
+    const handleWin = (e) => handleRecordScore(e, true);
+
+    const handleEndGame = () => {
+      this.setState({endGameDialogOpen: true});
+    };
+    
+    const handleRecordScore = (e, won) => {
+      this.setState({endGameDialogOpen: true})
+      const scores = JSON.parse(localStorage.getItem("QuixxHistory") || '[]');
+      scores.push({
+        'date': (new Date()).toISOString(),
+        'score': getTotalScore(),
+        'won': won,
+        'state': cloneDeep(this.state),
+      });
+      localStorage.setItem('QuixxHistory', JSON.stringify(scores));
+      this.handleReset(e, true);
     };
 
     return (
-      <>
-        <div 
-          id='game-wrapper'
-          className={classes.gameWrapper}
-          style={wrapperStyles}
+      <Grid
+        className={classes.game}
+        container
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <ColorRow
+          onClick={this.handleClick}
+          showScore={showRed}
+          score={redScore}
+          color='red'
+          row={red}
+          revealScore={(score) => this.setState({ [score]: !this.state[score] })}
+        />
+        <ColorRow
+          onClick={this.handleClick}
+          showScore={showYellow}
+          score={yellowScore}
+          color='yellow'
+          row={yellow}
+          revealScore={(score) => this.setState({ [score]: !this.state[score] })}
+        />
+        <ColorRow
+          onClick={this.handleClick}
+          showScore={showGreen}
+          score={greenScore}
+          color='green'
+          reverse
+          row={green}
+          revealScore={(score) => this.setState({ [score]: !this.state[score] })}
+        />
+        <ColorRow
+          onClick={this.handleClick}
+          showScore={showBlue}
+          score={blueScore}
+          color='blue'
+          reverse
+          row={blue}
+          revealScore={(score) => this.setState({ [score]: !this.state[score] })}
+        />
+        <StrikesRow
+          strikes={strikes}
+          onEndGame={handleEndGame}
+          onReset={this.handleReset}
+          onClick={(i) => this.handleClickStrikes(i)}
+          showFinal={showFinal}
+          showStrikes={showStrikes}
+          totalScore={getTotalScore()}
+          strikesScore={-strikesScore}
+          revealScore={(score) => this.setState({ [score]: !this.state[score] })}
+        />
+
+        <Dialog
+          fullScreen={true}
+          open={endGameDialogOpen}
+          onClose={() => this.setState({endGameDialogOpen: false})}
+          aria-labelledby="responsive-dialog-title"
         >
-          <ColorRows {...this.state}
-            onClick={this.handleClick}
-            showBlue={showBlue}
-            showGreen={showGreen}
-            showRed={showRed}
-            showYellow={showYellow}
-            blueScore={blueScore}
-            greenScore={greenScore}
-            redScore={redScore}
-            yellowScore={yellowScore}
-            revealScore={(score) => this.setState({ [score]: !this.state[score] })}
-          />
-          <StrikesRow
-            strikes={strikes}
-            onReset={this.handleReset}
-            onClick={(i) => this.handleClickStrikes(i)}
-            showFinal={showFinal}
-            showStrikes={showStrikes}
-            totalScore={redScore + yellowScore + greenScore + blueScore - strikesScore}
-            strikesScore={-strikesScore}
-            revealScore={(score) => this.setState({ [score]: !this.state[score] })}
-          />
-        </div>
-      </>
+          <DialogTitle id="responsive-dialog-title">{"Game Over"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Did you win?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleLoss} color="primary">
+              No
+            </Button>
+            <Button onClick={handleWin} color="primary" autoFocus>
+              Yes!
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Grid>
     );
   }
 }
 
-export default withStyles(styles)(QuixxScoreCard);
+export default withStyles(styles)(React.memo(QuixxScoreCard));
