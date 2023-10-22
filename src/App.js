@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import cloneDeep from 'lodash.clonedeep';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, useMediaQuery } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, useMediaQuery, Table, TableContainer, TableHead, TableRow, TableBody, TableCell } from '@material-ui/core';
+import { DeleteForever, Visibility } from '@material-ui/icons';
 import { withStyles } from '@material-ui/styles';
 import { useTheme } from '@material-ui/core/styles';
 import ColorRow from './components/ColorRow';
@@ -60,6 +61,7 @@ const blankState = {
   blueScore: 0,
   disabledDice: new Array(6).fill(false),
   endGameDialogOpen: false,
+  historyDialogOpen: false,
   green: [
     new Array(12).fill(false),
     [false, false, false, false, false, false, false, false, false, false, true, false]
@@ -168,10 +170,28 @@ class QuixxScoreCard extends Component {
   }
 
   handleReset = (e, skipConfirm) => {
+    // TODO: Use proper dialog
     if (skipConfirm || window.confirm('Are you sure you want to reset the card?'))
     {
       this.setState(cloneDeep(blankState));
     }
+  }
+
+  handleDelete = (e, i) => {
+    // TODO: Use proper dialog
+    if (window.confirm('Are you sure you want to delete the record?'))
+    {
+      var history = JSON.parse(localStorage.getItem("QuixxHistory"));
+      history.splice(i, 1);
+      localStorage.setItem("QuixxHistory", JSON.stringify(history));
+      // Cause the dialog to refresh
+      this.setState({historyDialogOpen: true});
+    }
+  }
+
+  handleView = (e, i) => {
+    // TODO: Show the game state from the history
+    window.alert("Stay tuned for this feature!");
   }
 
   toggleDisabled = (color) => {
@@ -226,6 +246,7 @@ class QuixxScoreCard extends Component {
       strikesScore = 0,
       yellowScore = 0,
       endGameDialogOpen,
+      historyDialogOpen,
     } = this.state;
 
     const getTotalScore = () => redScore + yellowScore + greenScore + blueScore - strikesScore;
@@ -238,7 +259,7 @@ class QuixxScoreCard extends Component {
     };
     
     const handleRecordScore = (e, won) => {
-      this.setState({endGameDialogOpen: true})
+      this.setState({endGameDialogOpen: false});
       const scores = JSON.parse(localStorage.getItem("QuixxHistory") || '[]');
       scores.push({
         'date': (new Date()).toISOString(),
@@ -296,6 +317,7 @@ class QuixxScoreCard extends Component {
           strikes={strikes}
           onEndGame={handleEndGame}
           onReset={this.handleReset}
+          onHistory={() => this.setState({historyDialogOpen: true})}
           onClick={(i) => this.handleClickStrikes(i)}
           showFinal={showFinal}
           showStrikes={showStrikes}
@@ -310,18 +332,65 @@ class QuixxScoreCard extends Component {
           onClose={() => this.setState({endGameDialogOpen: false})}
           aria-labelledby="responsive-dialog-title"
         >
-          <DialogTitle id="responsive-dialog-title">{"Game Over"}</DialogTitle>
+          <DialogTitle id="responsive-dialog-title">Game Over</DialogTitle>
           <DialogContent>
             <DialogContentText>
               Did you win?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus onClick={handleLoss} color="primary">
+            <Button onClick={() => this.setState({endGameDialogOpen: false})} color="primary">
+              Close
+            </Button>
+            <Button onClick={handleLoss} color="primary">
               No
             </Button>
             <Button onClick={handleWin} color="primary" autoFocus>
               Yes!
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog
+          fullScreen={true}
+          open={historyDialogOpen}
+          onClose={() => this.setState({historyDialogOpen: false})}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">Game History</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <TableContainer component={Paper}>
+                <Table className={classes.table} aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Date</TableCell>
+                      <TableCell align="right">Score</TableCell>
+                      <TableCell align="right">Win?</TableCell>
+                      <TableCell align="right">View</TableCell>
+                      <TableCell align="right">Delete</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {JSON.parse(localStorage.getItem('QuixxHistory') || '[]').map((row, i) => (
+                      <TableRow key={i}>
+                        <TableCell component="th" scope="row">
+                          {new Date(row.date).toLocaleDateString()} {new Date(row.date).toLocaleTimeString()}
+                        </TableCell>
+                        <TableCell align="right">{row.score}</TableCell>
+                        <TableCell align="right">{row.won ? 'X' : ''}</TableCell>
+                        <TableCell align="right"><Visibility onClick={(e) => this.handleView(e, i)} /></TableCell>
+                        <TableCell align="right"><DeleteForever onClick={(e) => this.handleDelete(e, i)} /></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={() => this.setState({historyDialogOpen: false})} color="primary">
+              Close
             </Button>
           </DialogActions>
         </Dialog>

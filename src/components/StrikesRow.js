@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme) => {
 });
 
 function StrikesRow(props) {
-  const { onClick, onReset, onEndGame, strikes, showStrikes, showFinal, revealScore, strikesScore, totalScore } = props;
+  const { onClick, onReset, onEndGame, onHistory, strikes, showStrikes, showFinal, revealScore, strikesScore, totalScore } = props;
   const classes = useStyles();
 
   return (
@@ -104,8 +104,8 @@ function StrikesRow(props) {
         <Grid container spacing={1} justify='space-around' alignItems='center' wrap='nowrap'>
           <FontAwesomeIcon icon={faCircleStop} className={classes.stop} onClick={onEndGame} />
           <FontAwesomeIcon icon={faRedo} className={classes.reset} onClick={onReset} />
-          <FontAwesomeIcon icon={faTrophy} className={classes.history}/>
-          <FontAwesomeIcon icon={faMinus} className={classes.minusIcon}/>
+          <FontAwesomeIcon icon={faTrophy} className={classes.history} onClick={onHistory} />
+          <FontAwesomeIcon icon={faMinus} className={classes.minusIcon} />
           {strikes.map((strike, i) => (
             <Grid item
               key={i}
