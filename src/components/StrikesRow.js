@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faRedo, faCircleStop, faTrophy } from '@fortawesome/free-solid-svg-icons';
 
 const useStyles = makeStyles((theme) => {
-  const { grey } = theme.palette;
+  const { grey, blue, green, red, yellow } = theme.palette;
 
   return ({
     scoreContainer: {
@@ -44,6 +44,29 @@ const useStyles = makeStyles((theme) => {
     minusIcon: {
       color: 'white',
       marginLeft: theme.spacing(30),
+    },
+    moves: {
+      backgroundColor: 'white',
+      border: `1px solid ${theme.palette.grey.main}`,
+      borderRadius: theme.spacing()/2,
+      cursor: 'pointer',
+      fontWeight: 'bold',
+      padding: `5px ${theme.spacing(1.9)}px`,
+    },
+    movesEmpty: {
+      visibility: 'hidden',
+    },
+    movesRed: {
+      backgroundColor: red.light,
+    },
+    movesYellow: {
+      backgroundColor: yellow.light,
+    },
+    movesGreen: {
+      backgroundColor: green.light,
+    },
+    movesBlue: {
+      backgroundColor: blue.light,
     },
     strike: {
       backgroundColor: 'white',
@@ -95,8 +118,9 @@ const useStyles = makeStyles((theme) => {
 });
 
 function StrikesRow(props) {
-  const { onClick, onReset, onEndGame, onHistory, strikes, showStrikes, showFinal, revealScore, strikesScore, totalScore } = props;
+  const { onClick, onClickUndo, onReset, onEndGame, onHistory, moves, strikes, showStrikes, showFinal, revealScore, strikesScore, totalScore } = props;
   const classes = useStyles();
+  const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   return (
     <Grid container justify='space-between' alignItems='center' wrap='nowrap' className={classes.row}>
@@ -105,6 +129,16 @@ function StrikesRow(props) {
           <FontAwesomeIcon icon={faCircleStop} className={classes.stop} onClick={onEndGame} />
           <FontAwesomeIcon icon={faRedo} className={classes.reset} onClick={onReset} />
           <FontAwesomeIcon icon={faTrophy} className={classes.history} onClick={onHistory} />
+          <div onClick={onClickUndo} className={clsx(
+            classes.moves,
+            moves.length === 0
+              ? classes.movesEmpty
+              : classes[`moves${moves[0][0][0].toUpperCase() + moves[0][0].slice(1)}`]
+            )}>
+            {moves.length > 0
+              ? (['red', 'yellow'].includes(moves[0][0]) ? numbers : numbers.toReversed())[moves[0][1]]
+              : null}
+          </div>
           <FontAwesomeIcon icon={faMinus} className={classes.minusIcon} />
           {strikes.map((strike, i) => (
             <Grid item

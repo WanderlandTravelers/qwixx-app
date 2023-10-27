@@ -54,6 +54,7 @@ const styles = (theme) => ({
 
 const diceIndex = { red: 2, yellow: 3, green: 4, blue: 5 };
 const blankState = {
+  moves: [],
   blue: [
     new Array(12).fill(false),
     [false, false, false, false, false, false, false, false, false, false, true, false]
@@ -113,12 +114,19 @@ class QuixxScoreCard extends Component {
    * @param {Boolean} isLock Whether or not the square clicked is a lock
   */
   handleClick = (color, index, isLock) => {
-    const { disabledDice } = this.state;
+    const { disabledDice, moves } = this.state;
     let [marks, disabled] = this.state[color];
 
     // if disabled do nothing
     if (disabled[index]) {
       return;
+    }
+
+    console.log(`clicked ${color} index ${index}`);
+    if (moves.length > 0 && moves[0][0] === color && moves[0][1] === index) {
+      moves.shift();
+    } else {
+      moves.unshift([color, index]);
     }
 
     // Disable a dice if a lock is marked
@@ -145,9 +153,15 @@ class QuixxScoreCard extends Component {
     });
 
     this.setState({
+      moves: moves,
       [color]: [marks, disabled],
       [`${color}Score`]: score,
     });
+  }
+
+  handleClickUndo = () => {
+    const moves = this.state.moves;
+    this.handleClick(moves[0][0], moves[0][1], false);
   }
 
   /**
@@ -242,6 +256,7 @@ class QuixxScoreCard extends Component {
       showYellow,
       showFinal,
       showStrikes,
+      moves,
       strikes,
       strikesScore = 0,
       yellowScore = 0,
@@ -314,7 +329,9 @@ class QuixxScoreCard extends Component {
           revealScore={(score) => this.setState({ [score]: !this.state[score] })}
         />
         <StrikesRow
+          moves={moves}
           strikes={strikes}
+          onClickUndo={this.handleClickUndo}
           onEndGame={handleEndGame}
           onReset={this.handleReset}
           onHistory={() => this.setState({historyDialogOpen: true})}
