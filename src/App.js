@@ -280,9 +280,10 @@ class QuixxScoreCard extends Component {
 
     const qwixxHistory = JSON.parse(localStorage.getItem('QuixxHistory') || '[]');
     const scores = qwixxHistory.map((item) => item.score);
+    const wins = qwixxHistory.map((item) => item.won);
     const averageScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
     const highScore = Math.max(...scores);
-    const winRate = Math.round(100 * qwixxHistory.map((item) => item.won).reduce((a, b) => a + b, 0) / qwixxHistory.length);
+    const winRate = Math.round(100 * wins.reduce((a, b) => a + b, 0) / wins.length);
 
     const getTotalScore = () => redScore + yellowScore + greenScore + blueScore - strikesScore;
   
