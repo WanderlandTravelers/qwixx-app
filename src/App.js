@@ -159,6 +159,12 @@ class QuixxScoreCard extends Component {
       [color]: [marks, disabled],
       [`${color}Score`]: score,
     });
+
+    // If two rows have become locked, end the game
+    const { red, yellow, green, blue } = this.state;
+    if ((red[0].toReversed()[0] + yellow[0].toReversed()[0] + green[0].toReversed()[0] + blue[0].toReversed()[0]) > 1) {
+      this.setState({endGameDialogOpen: true});
+    }
   }
 
   handleClickUndo = () => {
@@ -183,6 +189,11 @@ class QuixxScoreCard extends Component {
       strikes: marks,
       strikesScore: score,
     });
+
+    // If all strikes have been used, end the game
+    if (marks.reduce((a, b) => a + b, 0) == 4) {
+      this.setState({endGameDialogOpen: true});
+    }
   }
 
   handleReset = (e, skipConfirm) => {
