@@ -20,15 +20,6 @@ const useStyles = makeStyles((theme) => {
       paddingRight: theme.spacing()/2,
       fontSize: 18,
     },
-    scoreTop: {
-      borderBottom: `1px solid ${theme.palette.grey.main}`,
-      textAlign: 'center',
-      padding: theme.spacing(0.75),
-    },
-    scoreBottom: {
-      padding: theme.spacing()/2,
-      textAlign: 'center',
-    },
     icon: {
       color: 'white',
       width: '100% !important',
@@ -64,13 +55,12 @@ const useStyles = makeStyles((theme) => {
     },
     strike: {
       backgroundColor: 'white',
-      border: `1px solid ${theme.palette.grey.main}`,
-      borderRadius: theme.spacing()/2,
+      border: `2px solid ${grey.dark}`,
+      borderRadius: theme.spacing(2),
       cursor: 'pointer',
       fontWeight: 'bold',
-      marginRight: theme.spacing(1),
-      padding: `5px ${theme.spacing(1.9)}px`,
-      fontSize: 18,
+      padding: theme.spacing(1),
+      fontSize: 28,
       textAlign: 'center',
     },
     strikeEmpty: {
@@ -81,11 +71,8 @@ const useStyles = makeStyles((theme) => {
       border: `2px solid ${grey.dark}`,
       borderRadius: theme.spacing(2),
       cursor: 'pointer',
-      flexGrow: 1,
-      flexShrink: 0,
       padding: theme.spacing(1),
       textAlign: 'center',
-      width: 64
     },
     blockWhite: {
       color: 'white',
