@@ -31,17 +31,12 @@ const useStyles = makeStyles((theme) => {
     },
     icon: {
       color: 'white',
-      marginLeft: theme.spacing(3),
-    },
-    stop: {
-    },
-    reset: {
-    },
-    history: {
+      width: '100% !important',
     },
     minusIcon: {
       float: 'right',
       marginRight: theme.spacing(2),
+      width: 'auto !important',
     },
     moves: {
       backgroundColor: 'white',
@@ -50,7 +45,7 @@ const useStyles = makeStyles((theme) => {
       cursor: 'pointer',
       fontWeight: 'bold',
       padding: `5px ${theme.spacing(1.9)}px`,
-      marginLeft: theme.spacing(3),
+      textAlign: 'center',
     },
     movesEmpty: {
       visibility: 'hidden',
@@ -75,17 +70,11 @@ const useStyles = makeStyles((theme) => {
       fontWeight: 'bold',
       marginRight: theme.spacing(1),
       padding: `5px ${theme.spacing(1.9)}px`,
-    },
-    strikeEmpty: {
-      color: 'White',
-    },
-    strikesLabel: {
       fontSize: 18,
       textAlign: 'center',
     },
-    strikesLabelX: {
-      fontWeight: 'bold',
-      color: 'red',
+    strikeEmpty: {
+      color: 'White',
     },
     block: {
       backgroundColor: 'white',
@@ -104,12 +93,6 @@ const useStyles = makeStyles((theme) => {
     blackText: {
       color: 'black',
     },
-    strikesScore: {
-      // marginRight: theme.spacing(3),
-    },
-    totalScore: {
-      // marginRight: theme.spacing(1.5),
-    },
   });
 });
 
@@ -126,23 +109,23 @@ function StrikesRow(props) {
       alignItems="center"
       className={classes.row}
     >
-      <Grid item xs={2} key='0' className={classes.strikesContainer}>
+      <Grid item xs={11} key='0' className={classes.strikesContainer}>
         <Grid
           container
           direction="row"
           justifyContent='center'
           alignItems='center'
         >
-          <Grid item xs key='0'>
+          <Grid item xs={1} key='0'>
             <FontAwesomeIcon icon={faCircleStop} className={clsx(classes.icon, classes.stop)} onClick={onEndGame} />
           </Grid>
-          <Grid item xs key='1'>
+          <Grid item xs={1} key='1'>
             <FontAwesomeIcon icon={faRedo} className={clsx(classes.icon, classes.reset)} onClick={onReset} />
           </Grid>
-          <Grid item xs key='2'>
+          <Grid item xs={1} key='2'>
             <FontAwesomeIcon icon={faTrophy} className={clsx(classes.icon, classes.history)} onClick={onHistory} />
           </Grid>
-          <Grid item xs key='3'>
+          <Grid item xs={1} key='3'>
             <div onClick={onClickUndo} className={clsx(
               classes.moves,
               moves.length === 0
@@ -154,16 +137,7 @@ function StrikesRow(props) {
                 : null}
             </div>
           </Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={9} key='1' className={classes.strikesContainer}>
-        <Grid
-          container
-          direction="row"
-          justifyContent='center'
-          alignItems='center'
-        >
-          <Grid item xs={9} key='4'>
+          <Grid item xs={3} key='4'>
             <FontAwesomeIcon icon={faMinus} className={clsx(classes.icon, classes.minusIcon)} />
           </Grid>
           {strikes.map((strike, i) => (
@@ -176,7 +150,7 @@ function StrikesRow(props) {
               </div>
             </Grid>
           ))}
-          <Grid item xs key='10'
+          <Grid item xs={1} key='9'
             className={clsx(
               classes.block,
               classes.blockWhite,
@@ -189,16 +163,26 @@ function StrikesRow(props) {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={1} key='2'
-        className={clsx(
-          classes.block,
-          classes.blockWhite,
-          classes.totalScore,
-          showFinal && classes.blackText
-        )}
-        onClick={() => revealScore('showFinal')}
+      <Grid item xs={1} key='1'
       >
-        {totalScore}
+        <Grid
+          container
+          direction="row"
+          justifyContent='center'
+          alignItems='center'
+        >
+          <Grid item xs key='0'
+            className={clsx(
+              classes.block,
+              classes.blockWhite,
+              classes.totalScore,
+              showFinal && classes.blackText
+            )}
+            onClick={() => revealScore('showFinal')}
+          >
+            {totalScore}
+          </Grid>          
+        </Grid>
       </Grid>
     </Grid>
   );
