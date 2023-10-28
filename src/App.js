@@ -266,6 +266,12 @@ class QuixxScoreCard extends Component {
       historyDialogOpen,
     } = this.state;
 
+    const qwixxHistory = JSON.parse(localStorage.getItem('QuixxHistory') || '[]');
+    const scores = qwixxHistory.map((item) => item.score);
+    const averageScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+    const highScore = Math.max(...scores);
+    const winRate = 100 * qwixxHistory.map((item) => item.won).reduce((a, b) => a + b, 0) / qwixxHistory.length;
+
     const getTotalScore = () => redScore + yellowScore + greenScore + blueScore - strikesScore;
   
     const handleLoss = (e) => handleRecordScore(e, false);
@@ -376,7 +382,9 @@ class QuixxScoreCard extends Component {
           onClose={() => this.setState({historyDialogOpen: false})}
           aria-labelledby="responsive-dialog-title"
         >
-          <DialogTitle id="responsive-dialog-title">Game History</DialogTitle>
+          <DialogTitle id="responsive-dialog-title">
+            History (Avg: {averageScore} | High: {highScore} | %Win: {winRate})
+          </DialogTitle>
           <DialogContent>
             <DialogContentText>
               <TableContainer component={Paper}>
@@ -391,7 +399,7 @@ class QuixxScoreCard extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {JSON.parse(localStorage.getItem('QuixxHistory') || '[]').map((row, i) => (
+                    {qwixxHistory.map((row, i) => (
                       <TableRow key={i}>
                         <TableCell component="th" scope="row">
                           {new Date(row.date).toLocaleDateString()} {new Date(row.date).toLocaleTimeString()}
