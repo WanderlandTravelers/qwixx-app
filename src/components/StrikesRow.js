@@ -73,15 +73,11 @@ const useStyles = makeStyles((theme) => {
       borderRadius: theme.spacing()/2,
       cursor: 'pointer',
       fontWeight: 'bold',
-      // marginLeft: theme.spacing(3),
       marginRight: theme.spacing(1),
       padding: `5px ${theme.spacing(1.9)}px`,
     },
     strikeEmpty: {
       color: 'White',
-    },
-    strikesContainer: {
-      // width: "100%",
     },
     strikesLabel: {
       fontSize: 18,
@@ -95,7 +91,6 @@ const useStyles = makeStyles((theme) => {
       backgroundColor: 'white',
       border: `2px solid ${grey.dark}`,
       borderRadius: theme.spacing(2),
-      // marginLeft: theme.spacing(2),
       cursor: 'pointer',
       flexGrow: 1,
       flexShrink: 0,
