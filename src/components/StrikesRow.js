@@ -29,21 +29,19 @@ const useStyles = makeStyles((theme) => {
       padding: theme.spacing()/2,
       textAlign: 'center',
     },
-    stop: {
+    icon: {
       color: 'white',
-      marginRight: theme.spacing(2),
+      marginLeft: theme.spacing(3),
+    },
+    stop: {
     },
     reset: {
-      color: 'white',
-      marginRight: theme.spacing(2),
     },
     history: {
-      color: 'white',
-      marginRight: theme.spacing(2),
     },
     minusIcon: {
-      color: 'white',
-      marginLeft: theme.spacing(30),
+      float: 'right',
+      marginRight: theme.spacing(2),
     },
     moves: {
       backgroundColor: 'white',
@@ -52,6 +50,7 @@ const useStyles = makeStyles((theme) => {
       cursor: 'pointer',
       fontWeight: 'bold',
       padding: `5px ${theme.spacing(1.9)}px`,
+      marginLeft: theme.spacing(3),
     },
     movesEmpty: {
       visibility: 'hidden',
@@ -74,13 +73,15 @@ const useStyles = makeStyles((theme) => {
       borderRadius: theme.spacing()/2,
       cursor: 'pointer',
       fontWeight: 'bold',
+      // marginLeft: theme.spacing(3),
+      marginRight: theme.spacing(1),
       padding: `5px ${theme.spacing(1.9)}px`,
     },
     strikeEmpty: {
       color: 'White',
     },
     strikesContainer: {
-      width: "100%",
+      // width: "100%",
     },
     strikesLabel: {
       fontSize: 18,
@@ -94,7 +95,7 @@ const useStyles = makeStyles((theme) => {
       backgroundColor: 'white',
       border: `2px solid ${grey.dark}`,
       borderRadius: theme.spacing(2),
-      marginLeft: theme.spacing(2),
+      // marginLeft: theme.spacing(2),
       cursor: 'pointer',
       flexGrow: 1,
       flexShrink: 0,
@@ -109,10 +110,10 @@ const useStyles = makeStyles((theme) => {
       color: 'black',
     },
     strikesScore: {
-      marginRight: theme.spacing(3),
+      // marginRight: theme.spacing(3),
     },
     totalScore: {
-      marginRight: theme.spacing(1.5),
+      // marginRight: theme.spacing(1.5),
     },
   });
 });
@@ -123,26 +124,56 @@ function StrikesRow(props) {
   const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   return (
-    <Grid container justify='space-between' alignItems='center' wrap='nowrap' className={classes.row}>
-      <Grid item className={classes.strikesContainer}>
-        <Grid container spacing={1} justify='space-around' alignItems='center' wrap='nowrap'>
-          <FontAwesomeIcon icon={faCircleStop} className={classes.stop} onClick={onEndGame} />
-          <FontAwesomeIcon icon={faRedo} className={classes.reset} onClick={onReset} />
-          <FontAwesomeIcon icon={faTrophy} className={classes.history} onClick={onHistory} />
-          <div onClick={onClickUndo} className={clsx(
-            classes.moves,
-            moves.length === 0
-              ? classes.movesEmpty
-              : classes[`moves${moves[0][0][0].toUpperCase() + moves[0][0].slice(1)}`]
-            )}>
-            {moves.length > 0
-              ? (['red', 'yellow'].includes(moves[0][0]) ? numbers : numbers.toReversed())[moves[0][1]]
-              : null}
-          </div>
-          <FontAwesomeIcon icon={faMinus} className={classes.minusIcon} />
+    <Grid
+      container
+      direction="row"
+      justifyContent="center"
+      alignItems="center"
+      className={classes.row}
+    >
+      <Grid item xs={2} key='0' className={classes.strikesContainer}>
+        <Grid
+          container
+          direction="row"
+          justifyContent='center'
+          alignItems='center'
+        >
+          <Grid item xs key='0'>
+            <FontAwesomeIcon icon={faCircleStop} className={clsx(classes.icon, classes.stop)} onClick={onEndGame} />
+          </Grid>
+          <Grid item xs key='1'>
+            <FontAwesomeIcon icon={faRedo} className={clsx(classes.icon, classes.reset)} onClick={onReset} />
+          </Grid>
+          <Grid item xs key='2'>
+            <FontAwesomeIcon icon={faTrophy} className={clsx(classes.icon, classes.history)} onClick={onHistory} />
+          </Grid>
+          <Grid item xs key='3'>
+            <div onClick={onClickUndo} className={clsx(
+              classes.moves,
+              moves.length === 0
+                ? classes.movesEmpty
+                : classes[`moves${moves[0][0][0].toUpperCase() + moves[0][0].slice(1)}`]
+              )}>
+              {moves.length > 0
+                ? (['red', 'yellow'].includes(moves[0][0]) ? numbers : numbers.toReversed())[moves[0][1]]
+                : null}
+            </div>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item xs={9} key='1' className={classes.strikesContainer}>
+        <Grid
+          container
+          direction="row"
+          justifyContent='center'
+          alignItems='center'
+        >
+          <Grid item xs={9} key='4'>
+            <FontAwesomeIcon icon={faMinus} className={clsx(classes.icon, classes.minusIcon)} />
+          </Grid>
           {strikes.map((strike, i) => (
-            <Grid item
-              key={i}
+            <Grid item xs
+              key={5 + i}
               onClick={() => onClick(i)}
             >
               <div className={clsx(classes.strike, !strike ? classes.strikeEmpty : null)}>
@@ -150,7 +181,7 @@ function StrikesRow(props) {
               </div>
             </Grid>
           ))}
-          <Grid item 
+          <Grid item xs key='10'
             className={clsx(
               classes.block,
               classes.blockWhite,
@@ -161,18 +192,18 @@ function StrikesRow(props) {
           >
             {strikesScore}
           </Grid>
-          <Grid item 
-            className={clsx(
-              classes.block,
-              classes.blockWhite,
-              classes.totalScore,
-              showFinal && classes.blackText
-            )}
-            onClick={() => revealScore('showFinal')}
-          >
-            {totalScore}
-          </Grid>
         </Grid>
+      </Grid>
+      <Grid item xs={1} key='2'
+        className={clsx(
+          classes.block,
+          classes.blockWhite,
+          classes.totalScore,
+          showFinal && classes.blackText
+        )}
+        onClick={() => revealScore('showFinal')}
+      >
+        {totalScore}
       </Grid>
     </Grid>
   );
