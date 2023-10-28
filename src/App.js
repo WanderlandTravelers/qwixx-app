@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import cloneDeep from 'lodash.clonedeep';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, useMediaQuery, Table, TableContainer, TableHead, TableRow, TableBody, TableCell } from '@material-ui/core';
-import { DeleteForever, Visibility } from '@material-ui/icons';
+import { Grid } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles';
-import { useTheme } from '@material-ui/core/styles';
 import ColorRow from './components/ColorRow';
 import StrikesRow from './components/StrikesRow';
+import { EndGameDialog, HistoryDialog } from './components/dialogs';
 
 const scoring = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78];
 const styles = (theme) => ({
@@ -192,7 +191,7 @@ class QuixxScoreCard extends Component {
     });
 
     // If all strikes have been used, end the game
-    if (marks.reduce((a, b) => a + b, 0) == 4) {
+    if (marks.reduce((a, b) => a + b, 0) === 4) {
       this.setState({endGameDialogOpen: true});
     }
   }
@@ -205,22 +204,25 @@ class QuixxScoreCard extends Component {
     }
   }
 
-  handleDelete = (e, i) => {
+  handleDelete = (i) => {
     // TODO: Use proper dialog
     if (window.confirm('Are you sure you want to delete the record?'))
     {
-      var history = JSON.parse(localStorage.getItem("QuixxHistory"));
+      var history = this.getQwixxHistory();
       history.splice(i, 1);
-      localStorage.setItem("QuixxHistory", JSON.stringify(history));
+      this.setQwixxHistory(history);
       // Cause the dialog to refresh
       this.setState({historyDialogOpen: true});
     }
   }
 
-  handleView = (e, i) => {
+  handleView = (i) => {
     // TODO: Show the game state from the history
     window.alert("Stay tuned for this feature!");
   }
+
+  getQwixxHistory = () => JSON.parse(localStorage.getItem('QuixxHistory') || '[]');
+  setQwixxHistory = (history) => localStorage.setItem("QuixxHistory", JSON.stringify(history));
 
   toggleDisabled = (color) => {
     const { disabledDice } = this.state;
@@ -278,13 +280,6 @@ class QuixxScoreCard extends Component {
       historyDialogOpen,
     } = this.state;
 
-    const qwixxHistory = JSON.parse(localStorage.getItem('QuixxHistory') || '[]');
-    const scores = qwixxHistory.map((item) => item.score);
-    const wins = qwixxHistory.map((item) => item.won);
-    const averageScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
-    const highScore = Math.max(...scores);
-    const winRate = Math.round(100 * wins.reduce((a, b) => a + b, 0) / wins.length);
-
     const getTotalScore = () => redScore + yellowScore + greenScore + blueScore - strikesScore;
   
     const handleLoss = (e) => handleRecordScore(e, false);
@@ -296,14 +291,14 @@ class QuixxScoreCard extends Component {
     
     const handleRecordScore = (e, won) => {
       this.setState({endGameDialogOpen: false});
-      const scores = JSON.parse(localStorage.getItem("QuixxHistory") || '[]');
+      const scores = this.getQwixxHistory();
       scores.push({
         'date': (new Date()).toISOString(),
         'score': getTotalScore(),
         'won': won,
         'state': cloneDeep(this.state),
       });
-      localStorage.setItem('QuixxHistory', JSON.stringify(scores));
+      this.setQwixxHistory(scores);
       this.handleReset(e, true);
     };
 
@@ -364,76 +359,20 @@ class QuixxScoreCard extends Component {
           revealScore={(score) => this.setState({ [score]: !this.state[score] })}
         />
 
-        <Dialog
-          fullScreen={true}
+        <EndGameDialog
           open={endGameDialogOpen}
           onClose={() => this.setState({endGameDialogOpen: false})}
-          aria-labelledby="responsive-dialog-title"
-        >
-          <DialogTitle id="responsive-dialog-title">Game Over</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Did you win?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => this.setState({endGameDialogOpen: false})} color="primary">
-              Close
-            </Button>
-            <Button onClick={handleLoss} color="primary">
-              No
-            </Button>
-            <Button onClick={handleWin} color="primary" autoFocus>
-              Yes!
-            </Button>
-          </DialogActions>
-        </Dialog>
+          onLoss={handleLoss}
+          onWin={handleWin}
+        />
 
-        <Dialog
-          fullScreen={true}
+        <HistoryDialog
+          qwixxHistory={this.getQwixxHistory()}
           open={historyDialogOpen}
           onClose={() => this.setState({historyDialogOpen: false})}
-          aria-labelledby="responsive-dialog-title"
-        >
-          <DialogTitle id="responsive-dialog-title">
-            History (Avg: {averageScore} | High: {highScore} | %Win: {winRate})
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              <TableContainer component={Paper}>
-                <Table className={classes.table} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Date</TableCell>
-                      <TableCell align="right">Score</TableCell>
-                      <TableCell align="right">Win?</TableCell>
-                      <TableCell align="right">View</TableCell>
-                      <TableCell align="right">Delete</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {qwixxHistory.map((row, i) => (
-                      <TableRow key={i}>
-                        <TableCell component="th" scope="row">
-                          {new Date(row.date).toLocaleDateString()} {new Date(row.date).toLocaleTimeString()}
-                        </TableCell>
-                        <TableCell align="right">{row.score}</TableCell>
-                        <TableCell align="right">{row.won ? 'X' : ''}</TableCell>
-                        <TableCell align="right"><Visibility onClick={(e) => this.handleView(e, i)} /></TableCell>
-                        <TableCell align="right"><DeleteForever onClick={(e) => this.handleDelete(e, i)} /></TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button autoFocus onClick={() => this.setState({historyDialogOpen: false})} color="primary">
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
+          onViewHistory={this.handleView}
+          onDeleteHistory={this.handleDelete}
+        />
       </Grid>
     );
   }
