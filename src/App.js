@@ -122,11 +122,13 @@ class QuixxScoreCard extends Component {
       return;
     }
 
-    console.log(`clicked ${color} index ${index}`);
-    if (moves.length > 0 && moves[0][0] === color && moves[0][1] === index) {
-      moves.shift();
-    } else {
-      moves.unshift([color, index]);
+    if (!isLock)
+    {
+      if (moves.length > 0 && moves[0][0] === color && moves[0][1] === index) {
+        moves.shift();
+      } else {
+        moves.unshift([color, index]);
+      }
     }
 
     // Disable a dice if a lock is marked
