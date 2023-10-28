@@ -4,7 +4,7 @@ import { Grid } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles';
 import ColorRow from './components/ColorRow';
 import StrikesRow from './components/StrikesRow';
-import { EndGameDialog, HistoryDialog } from './components/dialogs';
+import { EndGameDialog, ResetDialog, HistoryDialog } from './components/dialogs';
 
 const scoring = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78];
 const styles = (theme) => ({
@@ -61,6 +61,7 @@ const blankState = {
   blueScore: 0,
   disabledDice: new Array(6).fill(false),
   endGameDialogOpen: false,
+  resetDialogOpen: false,
   historyDialogOpen: false,
   green: [
     new Array(12).fill(false),
@@ -196,12 +197,8 @@ class QuixxScoreCard extends Component {
     }
   }
 
-  handleReset = (e, skipConfirm) => {
-    // TODO: Use proper dialog
-    if (skipConfirm || window.confirm('Are you sure you want to reset the card?'))
-    {
-      this.setState(cloneDeep(blankState));
-    }
+  handleReset = () => {
+    this.setState(cloneDeep(blankState));
   }
 
   handleDelete = (i) => {
@@ -277,6 +274,7 @@ class QuixxScoreCard extends Component {
       strikesScore = 0,
       yellowScore = 0,
       endGameDialogOpen,
+      resetDialogOpen,
       historyDialogOpen,
     } = this.state;
 
@@ -299,7 +297,7 @@ class QuixxScoreCard extends Component {
         'state': cloneDeep(this.state),
       });
       this.setQwixxHistory(scores);
-      this.handleReset(e, true);
+      this.handleReset();
     };
 
     return (
@@ -349,7 +347,7 @@ class QuixxScoreCard extends Component {
           strikes={strikes}
           onClickUndo={this.handleClickUndo}
           onEndGame={handleEndGame}
-          onReset={this.handleReset}
+          onReset={() => this.setState({resetDialogOpen: true})}
           onHistory={() => this.setState({historyDialogOpen: true})}
           onClick={(i) => this.handleClickStrikes(i)}
           showFinal={showFinal}
@@ -364,6 +362,12 @@ class QuixxScoreCard extends Component {
           onClose={() => this.setState({endGameDialogOpen: false})}
           onLoss={handleLoss}
           onWin={handleWin}
+        />
+
+        <ResetDialog
+          open={resetDialogOpen}
+          onClose={() => this.setState({resetDialogOpen: false})}
+          onReset={this.handleReset}
         />
 
         <HistoryDialog
