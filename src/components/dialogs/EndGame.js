@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 
 export default function EndGameDialog(props) {
-  const { open, onClose, onLoss, onWin } = props;
+  const { open, onClose, onLoss, onWin, score } = props;
 
   return (
     <Dialog
@@ -14,7 +14,7 @@ export default function EndGameDialog(props) {
       <DialogTitle id="responsive-dialog-title">Game Over</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Did you win?
+          Your score: {score}<br/>Did you win?
         </DialogContentText>
       </DialogContent>
       <DialogActions>

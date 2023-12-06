@@ -362,6 +362,7 @@ class QuixxScoreCard extends Component {
           onClose={() => this.setState({endGameDialogOpen: false})}
           onLoss={handleLoss}
           onWin={handleWin}
+          score={getTotalScore()}
         />
 
         <ResetDialog
