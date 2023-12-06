@@ -205,9 +205,9 @@ class QuixxScoreCard extends Component {
     // TODO: Use proper dialog
     if (window.confirm('Are you sure you want to delete the record?'))
     {
-      var history = this.getQwixxHistory();
+      var history = this.getQwixxHistory().reverse();
       history.splice(i, 1);
-      this.setQwixxHistory(history);
+      this.setQwixxHistory(history.reverse());
       // Cause the dialog to refresh
       this.setState({historyDialogOpen: true});
     }
@@ -371,7 +371,7 @@ class QuixxScoreCard extends Component {
         />
 
         <HistoryDialog
-          qwixxHistory={this.getQwixxHistory()}
+          qwixxHistory={this.getQwixxHistory().reverse()}
           open={historyDialogOpen}
           onClose={() => this.setState({historyDialogOpen: false})}
           onViewHistory={this.handleView}
