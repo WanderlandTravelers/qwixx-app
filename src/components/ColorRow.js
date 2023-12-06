@@ -5,16 +5,10 @@ import OpenLockIcon from '@material-ui/icons/LockOpenOutlined';
 import LockIcon from '@material-ui/icons/Lock';
 import { makeStyles } from '@material-ui/styles';
 
-const useStyles = (color, rowHeight) => makeStyles((theme) => {
+const useStyles = (color) => makeStyles((theme) => {
   const { blue, green, red, yellow } = theme.palette;
 
   return ({
-    colorRow: {
-      height: `${rowHeight}px`,
-    },
-    height100: {
-      height: '100%',
-    },
     marks: {
       backgroundColor: theme.palette[color].main,
       padding: theme.spacing(),
@@ -27,7 +21,6 @@ const useStyles = (color, rowHeight) => makeStyles((theme) => {
       padding: theme.spacing(),
     },
     numberContent: {
-      lineHeight: '100%',
       textAlign: 'center',
       width: '100%',
     },
@@ -111,11 +104,10 @@ export default function ColorRow(props) {
     color,
     reverse = false,
     row,
-    rowHeight,
     showScore,
   } = props;
   const [marks, disabled] = row;
-  const classes = useStyles(color, rowHeight)();
+  const classes = useStyles(color)();
   const fiveXLocked = marks.filter(value => value).length < 5;
   const capitalizedColor = color.charAt(0).toUpperCase() + color.slice(1);
 
@@ -125,15 +117,13 @@ export default function ColorRow(props) {
       direction="row"
       justifyContent="center"
       alignItems="center"
-      className={classes.colorRow}
     >
-      <Grid item xs key='0' className={clsx(classes.marks, classes.height100)}>
+      <Grid item xs key='0' className={classes.marks}>
         <Grid
           container
           direction="row"
           justifyContent='center'
           alignItems='center'
-          className={classes.height100}
         >
           {marks.map((selected, i) => {
             const isLock = i + 1 === marks.length;
@@ -183,7 +173,6 @@ export default function ColorRow(props) {
       <Grid item xs={1} key='1'
         className={clsx(
           classes.block,
-          classes.height100,
           classes[`block${capitalizedColor}`],
           showScore && classes.blackText
         )}

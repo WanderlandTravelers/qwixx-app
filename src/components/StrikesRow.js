@@ -5,13 +5,10 @@ import { makeStyles } from '@material-ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faRedo, faCircleStop, faTrophy } from '@fortawesome/free-solid-svg-icons';
 
-const useStyles = (rowHeight) => makeStyles((theme) => {
+const useStyles = makeStyles((theme) => {
   const { grey, blue, green, red, yellow } = theme.palette;
 
   return ({
-    row: {
-      height: `${rowHeight}px`,
-    },
     scoreContainer: {
       marginRight: theme.spacing(2),
     },
@@ -87,22 +84,8 @@ const useStyles = (rowHeight) => makeStyles((theme) => {
 });
 
 function StrikesRow(props) {
-  const {
-    onClick,
-    onClickUndo,
-    onReset,
-    onEndGame,
-    onHistory,
-    moves,
-    strikes,
-    rowHeight,
-    showStrikes,
-    showFinal,
-    revealScore,
-    strikesScore,
-    totalScore
-  } = props;
-  const classes = useStyles(rowHeight)();
+  const { onClick, onClickUndo, onReset, onEndGame, onHistory, moves, strikes, showStrikes, showFinal, revealScore, strikesScore, totalScore } = props;
+  const classes = useStyles();
   const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   return (

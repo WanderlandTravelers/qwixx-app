@@ -51,11 +51,6 @@ const styles = (theme) => ({
   },
 });
 
-const getRowHeight = () => {
-  console.log(window.innerHeight / 5);
-  return window.innerHeight / 5;
-}
-
 const diceIndex = { red: 2, yellow: 3, green: 4, blue: 5 };
 const blankState = {
   moves: [],
@@ -91,7 +86,6 @@ const blankState = {
     [false, false, false, false, false, false, false, false, false, false, true, false]
   ],
   yellowScore: 0,
-  rowHeight: getRowHeight(),
 }
 
 class QuixxScoreCard extends Component {
@@ -105,7 +99,6 @@ class QuixxScoreCard extends Component {
       localStorage.removeItem('QwixxState');
       this.setState(savedState);
     }
-    window.addEventListener('resize', (_) => this.setState({rowHeight: getRowHeight()}));
     
     // save the state if the user navagates away or refreshes
     window.addEventListener('pagehide', () => {
@@ -212,9 +205,9 @@ class QuixxScoreCard extends Component {
     // TODO: Use proper dialog
     if (window.confirm('Are you sure you want to delete the record?'))
     {
-      var history = this.getQwixxHistory().reverse();
+      var history = this.getQwixxHistory();
       history.splice(i, 1);
-      this.setQwixxHistory(history.reverse());
+      this.setQwixxHistory(history);
       // Cause the dialog to refresh
       this.setState({historyDialogOpen: true});
     }
@@ -283,7 +276,6 @@ class QuixxScoreCard extends Component {
       endGameDialogOpen,
       resetDialogOpen,
       historyDialogOpen,
-      rowHeight,
     } = this.state;
 
     const getTotalScore = () => redScore + yellowScore + greenScore + blueScore - strikesScore;
@@ -322,7 +314,6 @@ class QuixxScoreCard extends Component {
           score={redScore}
           color='red'
           row={red}
-          rowHeight={rowHeight}
           revealScore={(score) => this.setState({ [score]: !this.state[score] })}
         />
         <ColorRow
@@ -331,7 +322,6 @@ class QuixxScoreCard extends Component {
           score={yellowScore}
           color='yellow'
           row={yellow}
-          rowHeight={rowHeight}
           revealScore={(score) => this.setState({ [score]: !this.state[score] })}
         />
         <ColorRow
@@ -341,7 +331,6 @@ class QuixxScoreCard extends Component {
           color='green'
           reverse
           row={green}
-          rowHeight={rowHeight}
           revealScore={(score) => this.setState({ [score]: !this.state[score] })}
         />
         <ColorRow
@@ -351,13 +340,11 @@ class QuixxScoreCard extends Component {
           color='blue'
           reverse
           row={blue}
-          rowHeight={rowHeight}
           revealScore={(score) => this.setState({ [score]: !this.state[score] })}
         />
         <StrikesRow
           moves={moves}
           strikes={strikes}
-          rowHeight={rowHeight}
           onClickUndo={this.handleClickUndo}
           onEndGame={handleEndGame}
           onReset={() => this.setState({resetDialogOpen: true})}
@@ -375,7 +362,6 @@ class QuixxScoreCard extends Component {
           onClose={() => this.setState({endGameDialogOpen: false})}
           onLoss={handleLoss}
           onWin={handleWin}
-          score={getTotalScore()}
         />
 
         <ResetDialog
@@ -385,7 +371,7 @@ class QuixxScoreCard extends Component {
         />
 
         <HistoryDialog
-          qwixxHistory={this.getQwixxHistory().reverse()}
+          qwixxHistory={this.getQwixxHistory()}
           open={historyDialogOpen}
           onClose={() => this.setState({historyDialogOpen: false})}
           onViewHistory={this.handleView}
