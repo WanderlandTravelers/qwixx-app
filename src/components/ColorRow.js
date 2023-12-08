@@ -33,7 +33,15 @@ const useStyles = (color) => makeStyles((theme) => {
       color: 'black',
     },
     disabledNumberContent: {
-      textDecoration: 'line-through',
+      '&::before': {
+        content: '""',
+        borderBottom: '3px solid',
+        display: 'flex',
+        marginLeft: theme.spacing(2),
+        width: '50%',
+        transform: 'rotate(-45deg)',
+        transformOrigin: 'right',
+      },
     },
     x: {
       fontWeight: 'bold',
