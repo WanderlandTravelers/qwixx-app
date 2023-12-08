@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => {
 });
 
 function StrikesRow(props) {
-  const { onClick, onClickUndo, onReset, onEndGame, onHistory, moves, strikes, showStrikes, showFinal, revealScore, strikesScore, totalScore } = props;
+  const { onClick, onClickUndo, onReset, onEndGame, onHistory, moves, strikes, strikesScore, totalScore } = props;
   const classes = useStyles();
   const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
@@ -142,9 +142,8 @@ function StrikesRow(props) {
               classes.block,
               classes.blockWhite,
               classes.strikesScore,
-              showStrikes && classes.blackText,
+              classes.blackText,
             )}
-            onClick={() => revealScore('showStrikes')}
           >
             {strikesScore}
           </Grid>
@@ -163,9 +162,8 @@ function StrikesRow(props) {
               classes.block,
               classes.blockWhite,
               classes.totalScore,
-              showFinal && classes.blackText
+              classes.blackText
             )}
-            onClick={() => revealScore('showFinal')}
           >
             {totalScore}
           </Grid>          

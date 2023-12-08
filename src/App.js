@@ -73,12 +73,6 @@ const blankState = {
     [false, false, false, false, false, false, false, false, false, false, true, false]
   ],
   redScore: 0,
-  showBlue: true, 
-  showFinal: true,
-  showGreen: true, 
-  showRed: true, 
-  showStrikes: true,
-  showYellow: true,
   strikes: new Array(4).fill(false),
   strikesScore: 0,
   yellow: [
@@ -263,12 +257,6 @@ class QuixxScoreCard extends Component {
       blueScore = 0,
       greenScore = 0,
       redScore = 0,
-      showBlue,
-      showGreen,
-      showRed,
-      showYellow,
-      showFinal,
-      showStrikes,
       moves,
       strikes,
       strikesScore = 0,
@@ -310,37 +298,29 @@ class QuixxScoreCard extends Component {
       >
         <ColorRow
           onClick={this.handleClick}
-          showScore={showRed}
           score={redScore}
           color='red'
           row={red}
-          revealScore={(score) => this.setState({ [score]: !this.state[score] })}
         />
         <ColorRow
           onClick={this.handleClick}
-          showScore={showYellow}
           score={yellowScore}
           color='yellow'
           row={yellow}
-          revealScore={(score) => this.setState({ [score]: !this.state[score] })}
         />
         <ColorRow
           onClick={this.handleClick}
-          showScore={showGreen}
           score={greenScore}
           color='green'
           reverse
           row={green}
-          revealScore={(score) => this.setState({ [score]: !this.state[score] })}
         />
         <ColorRow
           onClick={this.handleClick}
-          showScore={showBlue}
           score={blueScore}
           color='blue'
           reverse
           row={blue}
-          revealScore={(score) => this.setState({ [score]: !this.state[score] })}
         />
         <StrikesRow
           moves={moves}
@@ -350,11 +330,8 @@ class QuixxScoreCard extends Component {
           onReset={() => this.setState({resetDialogOpen: true})}
           onHistory={() => this.setState({historyDialogOpen: true})}
           onClick={(i) => this.handleClickStrikes(i)}
-          showFinal={showFinal}
-          showStrikes={showStrikes}
           totalScore={getTotalScore()}
           strikesScore={-strikesScore}
-          revealScore={(score) => this.setState({ [score]: !this.state[score] })}
         />
 
         <EndGameDialog

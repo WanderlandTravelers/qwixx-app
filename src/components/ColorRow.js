@@ -109,11 +109,9 @@ export default function ColorRow(props) {
   const {
     score,
     onClick,
-    revealScore,
     color,
     reverse = false,
     row,
-    showScore,
   } = props;
   const [marks, disabled] = row;
   const classes = useStyles(color)();
@@ -183,9 +181,8 @@ export default function ColorRow(props) {
         className={clsx(
           classes.block,
           classes[`block${capitalizedColor}`],
-          showScore && classes.blackText
+          classes.blackText
         )}
-        onClick={() => revealScore(`show${capitalizedColor}`)}
       >
         <div className={classes.scoreContent}>{score}</div>
       </Grid>
