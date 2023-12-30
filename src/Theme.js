@@ -1,7 +1,7 @@
-import { createTheme } from '@material-ui/core/styles';
-import { blue, green, grey, red, yellow } from '@material-ui/core/colors';
+import { createTheme, adaptV4Theme } from '@mui/material/styles';
+import { blue, green, grey, red, yellow } from '@mui/material/colors';
 
-export default createTheme({
+export default createTheme(adaptV4Theme({
   typography: {
     fontSize: 28,
   },
@@ -29,4 +29,4 @@ export default createTheme({
       main: yellow[700],
     }
   }
-});
+}));

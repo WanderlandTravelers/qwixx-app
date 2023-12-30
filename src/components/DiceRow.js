@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Paper, Grid, Button } from '@material-ui/core';
-import { withStyles } from '@material-ui/styles';
+import { Paper, Grid, Button } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDice } from '@fortawesome/free-solid-svg-icons';
 import { One, Two, Three, Four, Five, Six } from './DiceFaces';
@@ -13,7 +13,7 @@ const styles = (theme) => ({
     marginBottom: theme.spacing(2),
     marginLeft: 'auto',
     marginRight: 'auto',
-    padding: `${theme.spacing(1)}px ${theme.spacing(1.5)}px`,
+    padding: `${theme.spacing(1)} ${theme.spacing(1.5)}`,
     width: 'fit-content',
   },
   button: {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppBar, Toolbar, Button, Typography, Hidden } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { AppBar, Toolbar, Button, Typography, Hidden } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt, faRedo } from '@fortawesome/free-solid-svg-icons';
 
@@ -49,7 +49,7 @@ export default function QwixxAppBar({ onReset }) {
         <Typography variant='h1' className={classes.appTitle}>
           Qwixx App
         </Typography>
-        <Hidden xsDown>
+        <Hidden smDown>
           <Button
             className={classes.link}
             href={rules}

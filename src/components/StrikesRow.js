@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Grid } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { Grid } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faRedo, faCircleStop, faTrophy } from '@fortawesome/free-solid-svg-icons';
 
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => {
       borderRadius: theme.spacing()/2,
       cursor: 'pointer',
       fontWeight: 'bold',
-      padding: `5px ${theme.spacing(1.9)}px`,
+      padding: `5px ${theme.spacing(1.9)}`,
       textAlign: 'center',
     },
     movesEmpty: {

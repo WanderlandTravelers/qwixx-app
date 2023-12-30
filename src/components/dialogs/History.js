@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Table, TableContainer, TableHead, TableRow, TableBody, TableCell } from '@material-ui/core';
-import { DeleteForever, Visibility } from '@material-ui/icons';
-import { makeStyles } from '@material-ui/styles';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Table, TableContainer, TableHead, TableRow, TableBody, TableCell } from '@mui/material';
+import { DeleteForever, Visibility } from '@mui/icons-material';
+import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles(() => {
   return ({

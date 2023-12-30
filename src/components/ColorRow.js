@@ -1,14 +1,14 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Grid } from '@material-ui/core';
-import OpenLockIcon from '@material-ui/icons/LockOpenOutlined';
-import LockIcon from '@material-ui/icons/Lock';
-import { makeStyles } from '@material-ui/styles';
+import { Grid } from '@mui/material';
+import OpenLockIcon from '@mui/icons-material/LockOpenOutlined';
+import LockIcon from '@mui/icons-material/Lock';
+import { makeStyles } from '@mui/styles';
 
 const useStyles = (color) => makeStyles((theme) => {
   const { blue, green, red, yellow } = theme.palette;
 
-  return ({
+  return {
     marks: {
       backgroundColor: theme.palette[color].main,
       padding: theme.spacing(),
@@ -53,7 +53,7 @@ const useStyles = (color) => makeStyles((theme) => {
     },
     circle: {
       borderRadius: theme.spacing(20),
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('md')]: {
         padding: theme.spacing(),
       },
     },
@@ -102,7 +102,7 @@ const useStyles = (color) => makeStyles((theme) => {
     blackText: {
       color: 'black',
     },
-  });
+  };
 });
 
 export default function ColorRow(props) {

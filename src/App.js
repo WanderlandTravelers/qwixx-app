@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import cloneDeep from 'lodash.clonedeep';
-import { Grid } from '@material-ui/core';
-import { withStyles } from '@material-ui/styles';
+import { Grid } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import ColorRow from './components/ColorRow';
 import StrikesRow from './components/StrikesRow';
 import { EndGameDialog, ResetDialog, HistoryDialog } from './components/dialogs';

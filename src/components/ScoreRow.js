@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Grid } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { Grid } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles((theme) => {
   const { blue, green, grey, red, yellow } = theme.palette;
@@ -77,7 +77,7 @@ function ScoreRow(props) {
   const totalScore = redScore + yellowScore + greenScore + blueScore - strikesScore;
 
   return (
-    <Grid container justify='space-between' alignItems='center'>
+    <Grid container justifyContent='space-between' alignItems='center'>
       <Grid item className={classes.totals}>
         Totals
       </Grid>

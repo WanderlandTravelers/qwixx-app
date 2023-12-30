@@ -1,9 +1,9 @@
 import React from 'react';
 import clsx from 'clsx';
-import OpenLockIcon from '@material-ui/icons/LockOpenOutlined';
-import LockIcon from '@material-ui/icons/Lock';
-import { Grid } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import OpenLockIcon from '@mui/icons-material/LockOpenOutlined';
+import LockIcon from '@mui/icons-material/Lock';
+import { Grid } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 const useStyles = (color, lockSection) => makeStyles((theme) => ({
   row: {
@@ -18,7 +18,7 @@ const useStyles = (color, lockSection) => makeStyles((theme) => ({
     // paddingTop: theme.spacing(2),
     // paddingBottom: theme.spacing(2),
     position: 'relative',
-    //width: `calc((100% / ${lockSection ? '2' : '10'}) - ${theme.spacing(2)}px)`,
+    //width: `calc((100% / ${lockSection ? '2' : '10'}) - ${theme.spacing(2)})`,
     width: 56,
   },
   numberContent: {
@@ -55,7 +55,7 @@ const useStyles = (color, lockSection) => makeStyles((theme) => ({
   },
   circle: {
     borderRadius: theme.spacing(20),
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       padding: theme.spacing(),
     },
   },
@@ -67,7 +67,7 @@ function FreeSection({ color, onClick, reverse, row }) {
 
   return (
     <div className={classes.row}>
-      <Grid container justify='space-around'>
+      <Grid container justifyContent='space-around'>
         {marks.map((selected, i) => {
 
           if (i < 10) {
@@ -104,7 +104,7 @@ function LockSection({ color, onClick, reverse, row }) {
 
   return (
     <div className={classes.row}>
-      <Grid container justify='space-around'>
+      <Grid container justifyContent='space-around'>
         {marks.map((selected, i) => {
           const isLock = i + 1 === marks.length;
 
