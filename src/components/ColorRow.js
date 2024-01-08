@@ -9,6 +9,18 @@ const useStyles = (color) => makeStyles((theme) => {
   const { blue, green, red, yellow } = theme.palette;
 
   return {
+    row: {
+      fontSize: theme.typography.fontSize,
+    },
+    verticallyCenter: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
+    },
+    height100: {
+      height: '100%',
+    },
     marks: {
       backgroundColor: theme.palette[color].main,
       padding: theme.spacing(),
@@ -49,8 +61,6 @@ const useStyles = (color) => makeStyles((theme) => {
       },
     },
     openLock: {
-      fontSize: theme.typography.fontSize,
-      marginBottom: -4,
       transform: 'rotate(45deg)',
     },
     lock: {
@@ -64,31 +74,28 @@ const useStyles = (color) => makeStyles((theme) => {
       backgroundColor: 'white',
       cursor: 'pointer',
       padding: theme.spacing(2),
+      paddingRight: `env(safe-area-inset-right)`,
       textAlign: 'center',
     },
     blockRed: {
       borderColor: red.main,
       backgroundColor: red.light,
       color: red.light,
-      paddingRight: `env(safe-area-inset-right)`,
     },
     blockYellow: {
       borderColor: yellow.main,
       backgroundColor: yellow.light,
       color: yellow.light,
-      paddingRight: `env(safe-area-inset-right)`,
     },
     blockGreen: {
       borderColor: green.main,
       backgroundColor: green.light,
       color: green.light,
-      paddingRight: `env(safe-area-inset-right)`,
     },
     blockBlue: {
       borderColor: blue.main,
       backgroundColor: blue.light,
       color: blue.light,
-      paddingRight: `env(safe-area-inset-right)`,
     },
     blackText: {
       color: 'black',
@@ -103,6 +110,7 @@ export default function ColorRow(props) {
     color,
     reverse = false,
     row,
+    className,
   } = props;
   const [marks, disabled] = row;
   const classes = useStyles(color)();
@@ -111,17 +119,19 @@ export default function ColorRow(props) {
 
   return (
     <Grid
+      className={clsx(className, classes.row)}
       container
       direction="row"
       justifyContent="center"
       alignItems="center"
     >
-      <Grid item xs key='0' className={classes.marks}>
+      <Grid item xs key='0' className={clsx(classes.marks, classes.height100)}>
         <Grid
           container
           direction="row"
           justifyContent='center'
           alignItems='center'
+          className={classes.height100}
         >
           {marks.map((selected, i) => {
             const isLock = i + 1 === marks.length;
@@ -131,10 +141,10 @@ export default function ColorRow(props) {
                   item
                   xs
                   key={color + i}
-                  className={clsx(classes.number, classes.square, disabled[i] && !selected ? classes.disabledNumber : classes.liveNumber)}
+                  className={clsx(classes.height100, classes.number, classes.square, disabled[i] && !selected ? classes.disabledNumber : classes.liveNumber)}
                   onClick={() => onClick(color, i)}
                 >
-                  <div className={clsx(classes.numberContent, disabled[i] && !selected && classes.disabledNumberContent)}>
+                  <div className={clsx(classes.numberContent, classes.verticallyCenter, disabled[i] && !selected && classes.disabledNumberContent)}>
                     {selected
                       ? <span className={classes.x}>X</span>
                       : reverse
@@ -147,18 +157,19 @@ export default function ColorRow(props) {
                   item
                   xs
                   key={color + i}
-                  className={clsx(classes.number, classes.square, disabled[i] && !selected ? classes.disabledNumber : classes.liveNumber)}
+                  className={clsx(classes.height100, classes.number, classes.square, disabled[i] && !selected ? classes.disabledNumber : classes.liveNumber)}
                   onClick={() => onClick(color, i, isLock)}
                 >
                   <div className={clsx(
                     classes.numberContent,
+                    classes.verticallyCenter,
                     !fiveXLocked && disabled[i] && !selected && classes.disabledNumberContent)}>
                     {selected
                       ? isLock
                         ? <LockIcon className={classes.lock} />
                         : <span className={classes.x}>X</span>
                       : isLock
-                        ? <OpenLockIcon className={classes.openLock} />
+                        ? <OpenLockIcon className={clsx(classes.lock, classes.openLock)} />
                         : reverse
                           ? marks.length - i
                           : i + 2
@@ -170,12 +181,13 @@ export default function ColorRow(props) {
       </Grid>
       <Grid item xs={1} key='1'
         className={clsx(
+          classes.height100,
           classes.block,
           classes[`block${capitalizedColor}`],
           classes.blackText
         )}
       >
-        <div className={classes.scoreContent}>{score}</div>
+        <div className={clsx(classes.scoreContent, classes.verticallyCenter)}>{score}</div>
       </Grid>
     </Grid>
   );

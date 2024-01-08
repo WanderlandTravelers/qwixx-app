@@ -19,34 +19,12 @@ const styles = (theme) => ({
     margin: `${theme.spacing(2)} auto`,
     fontSize: 14,
   },
-  fiveXTop: {
-    border: '1px solid',
-    borderBottom: 0,
-    borderTopLeftRadius: theme.spacing(2),
-    borderTopRightRadius: theme.spacing(2),
-    display: 'inline-block',
-    float: 'right',
-    fontSize: 14,
-    marginRight: theme.spacing(0.75),
-    textAlign: 'center',
-    width: 130,
-  },
-  fiveXBottom: {
-    border: '1px solid',
-    borderBottomLeftRadius: theme.spacing(4),
-    borderBottomRightRadius: theme.spacing(4),
-    borderTop: 0,
-    display: 'inline-block',
-    float: 'right',
-    height: theme.spacing(),
-    marginBottom: theme.spacing(),
-    marginRight: theme.spacing(0.75),
-    marginTop: -theme.spacing(2),
-    width: 130,
+  row: {
+    height: '20%',
   },
   game: {
     backgroundColor: '#282c34',
-    height: '100%',
+    height: '100vh',
     paddingBottom: `env(safe-area-inset-bottom)`,
   },
 });
@@ -297,18 +275,21 @@ class QuixxScoreCard extends Component {
         alignItems="center"
       >
         <ColorRow
+          className={classes.row}
           onClick={this.handleClick}
           score={redScore}
           color='red'
           row={red}
         />
         <ColorRow
+          className={classes.row}
           onClick={this.handleClick}
           score={yellowScore}
           color='yellow'
           row={yellow}
         />
         <ColorRow
+          className={classes.row}
           onClick={this.handleClick}
           score={greenScore}
           color='green'
@@ -316,6 +297,7 @@ class QuixxScoreCard extends Component {
           row={green}
         />
         <ColorRow
+          className={classes.row}
           onClick={this.handleClick}
           score={blueScore}
           color='blue'
@@ -323,6 +305,7 @@ class QuixxScoreCard extends Component {
           row={blue}
         />
         <StrikesRow
+          className={classes.row}
           moves={moves}
           strikes={strikes}
           onClickUndo={this.handleClickUndo}
