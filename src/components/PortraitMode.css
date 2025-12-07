@@ -12,13 +12,16 @@
   align-items: center;
   text-align: center;
   overflow: hidden;
+  font-size: 14pt;
+}
+
+.portrait-mode h1 {
+  font-size: 20pt;
 }
 
 .rotate-icon {
   width: 100px;
   height: 100px;
-  border: 5px solid white;
-  border-radius: 10px;
   margin-bottom: 20px;
   animation: rotate-center 1.5s ease-in-out infinite;
   display: flex;
