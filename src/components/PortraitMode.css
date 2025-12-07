@@ -1,0 +1,50 @@
+.portrait-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #282c34;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  font-size: 14pt;
+}
+
+.portrait-mode h1 {
+  font-size: 20pt;
+}
+
+.rotate-icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  animation: rotate-center 1.5s ease-in-out infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rotate-icon::before {
+  content: '';
+  width: 50px;
+  height: 80px;
+  background-color: white;
+  border-radius: 5px;
+}
+
+@keyframes rotate-center {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(90deg);
+  }
+  100% {
+    transform: rotate(90deg);
+  }
+}

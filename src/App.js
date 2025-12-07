@@ -3,6 +3,7 @@ import cloneDeep from 'lodash.clonedeep';
 import { Grid } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import ColorRow from './components/ColorRow';
+import PortraitMode from './components/PortraitMode';
 import StrikesRow from './components/StrikesRow';
 import { EndGameDialog, ResetDialog, HistoryDialog } from './components/dialogs';
 
@@ -61,9 +62,21 @@ const blankState = {
 }
 
 class QuixxScoreCard extends Component {
-  state = cloneDeep(blankState);
+  state = {
+    ...cloneDeep(blankState),
+    isPortrait: window.matchMedia('(orientation: portrait)').matches,
+  };
 
   componentDidMount() {
+    const handleOrientationChange = () => {
+      this.setState({ isPortrait: window.matchMedia('(orientation: portrait)').matches });
+    };
+
+    window.addEventListener('resize', handleOrientationChange);
+    this.removeOrientationListener = () => {
+      window.removeEventListener('resize', handleOrientationChange);
+    };
+
     // if there is a saved state, reload it
     let savedState = localStorage.getItem('QwixxState');
     if (savedState) {
@@ -77,6 +90,12 @@ class QuixxScoreCard extends Component {
       console.log('saving state');
       localStorage.setItem('QwixxState', JSON.stringify(this.state));
     });
+  }
+
+  componentWillUnmount() {
+    if (this.removeOrientationListener) {
+      this.removeOrientationListener();
+    }
   }
   
   /**
@@ -228,6 +247,7 @@ class QuixxScoreCard extends Component {
     // const theme = useTheme();
     // const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const {
+      isPortrait,
       red,
       yellow,
       green,
@@ -243,6 +263,10 @@ class QuixxScoreCard extends Component {
       resetDialogOpen,
       historyDialogOpen,
     } = this.state;
+
+    if (isPortrait) {
+      return <PortraitMode />;
+    }
 
     const getTotalScore = () => redScore + yellowScore + greenScore + blueScore - strikesScore;
   
