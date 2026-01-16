@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { Grid } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRedo, faCircleStop, faTrophy } from '@fortawesome/free-solid-svg-icons';
+import { faRedo, faCircleStop, faTrophy, faCog } from '@fortawesome/free-solid-svg-icons';
 
 const useStyles = makeStyles((theme) => {
   const { grey, blue, green, red, yellow } = theme.palette;
@@ -105,6 +105,7 @@ function StrikesRow(props) {
     onReset,
     onEndGame,
     onHistory,
+    onSettings,
     className,
     moves,
     strikes,
@@ -139,6 +140,9 @@ function StrikesRow(props) {
           <Grid item xs={1} key='2' className={classes.iconContainer}>
             <FontAwesomeIcon icon={faTrophy} className={clsx(classes.icon, classes.history)} onClick={onHistory} />
           </Grid>
+          <Grid item xs={1} key='settings' className={classes.iconContainer} data-testid="SettingsIcon">
+            <FontAwesomeIcon icon={faCog} className={clsx(classes.icon, classes.settings)} onClick={onSettings} />
+          </Grid>
           <Grid item xs={1} key='3' className={classes.movesContainer}>
             <div onClick={onClickUndo} className={clsx(
               classes.moves,
@@ -152,12 +156,11 @@ function StrikesRow(props) {
                 : null}
             </div>
           </Grid>
-          <Grid item xs={1} key='4'></Grid>
           <Grid item xs={1} key='5'></Grid>
           <Grid item xs={1} key='6'></Grid>
           {strikes.map((strike, i) => (
             <Grid item xs
-              key={5 + i}
+              key={`strike-${i}`}
               onClick={() => onClick(i)}
               className={classes.strikeContainer}
             >
