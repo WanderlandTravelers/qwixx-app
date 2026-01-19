@@ -26,6 +26,11 @@
     "test:ci": "npm run _rs test -- --coverage --reporters=default --watchAll=false",
     "eject": "react-scripts eject"
   },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(gif|png|jpg|jpeg|svg)$": "<rootDir>/src/__mocks__/fileMock.js"
+    }
+  },
   "eslintConfig": {
     "extends": "react-app"
   },

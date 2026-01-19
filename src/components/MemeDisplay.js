@@ -1,9 +1,15 @@
 import React from 'react';
 import { Modal, Box } from '@mui/material';
 
-// For now, we'll just use a placeholder.
-// In the future, we can pass in a list of memes and select one randomly.
-const memeUrl = 'https://via.placeholder.com/800x600.png?text=6-7+MEME!';
+import meme1 from '../assets/meme1.gif';
+import meme2 from '../assets/meme2.gif';
+import meme3 from '../assets/meme3.gif';
+import meme4 from '../assets/meme4.gif';
+import meme5 from '../assets/meme5.gif';
+import meme6 from '../assets/meme6.gif';
+import meme7 from '../assets/meme7.gif';
+
+const memes = [meme1, meme2, meme3, meme4, meme5, meme6, meme7];
 
 const style = {
   position: 'absolute',
@@ -21,6 +27,8 @@ const MemeDisplay = ({ open, onClose }) => {
     return null;
   }
 
+  const randomMeme = memes[Math.floor(Math.random() * memes.length)];
+
   return (
     <Modal
       open={open}
@@ -29,7 +37,7 @@ const MemeDisplay = ({ open, onClose }) => {
       aria-describedby="meme-modal-description"
     >
       <Box sx={style}>
-        <img src={memeUrl} alt="6-7 Meme" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+        <img src={randomMeme} alt="Random Meme" style={{ maxWidth: '100%', maxHeight: '100%' }} />
       </Box>
     </Modal>
   );

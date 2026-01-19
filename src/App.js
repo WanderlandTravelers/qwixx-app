@@ -114,9 +114,10 @@ class QuixxScoreCard extends Component {
     const { disabledDice, moves, settings, lastClick } = this.state;
     const now = Date.now();
     let [marks, disabled] = this.state[color];
+    const isMarking = !marks[index];
 
     // 6-7 rule check
-    if (settings.is67RuleEnabled && !isLock) {
+    if (settings.is67RuleEnabled && !isLock && isMarking) {
       const isAscending = ['red', 'yellow'].includes(color);
       const sixIndex = isAscending ? 4 : 6;
       const sevenIndex = 5; // Same for both
@@ -183,17 +184,12 @@ class QuixxScoreCard extends Component {
       this.setState({endGameDialogOpen: true});
     }
 
-    if (!isLock) {
+    if (!isLock && isMarking) {
       this.setState({ lastClick: { color, index, timestamp: now } });
     }
   }
 
   trigger67Rule = (color, eightIndex) => {
-    const [marks] = this.state[color];
-    if (marks[eightIndex]) {
-      return;
-    }
-
     this.setState({ showMeme: true });
 
     // Play sound
