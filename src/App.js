@@ -64,7 +64,7 @@ const blankState = {
 class QuixxScoreCard extends Component {
   state = {
     ...cloneDeep(blankState),
-    isPortrait: window.matchMedia('(orientation: portrait)').matches,
+    isPortrait: false, // Assume landscape initially to prevent flash
   };
 
   componentDidMount() {
@@ -72,9 +72,13 @@ class QuixxScoreCard extends Component {
       this.setState({ isPortrait: window.matchMedia('(orientation: portrait)').matches });
     };
 
+    // A timeout is used to work around an iOS orientation bug on initial load
+    const orientationCheckTimeout = setTimeout(handleOrientationChange, 100);
+
     window.addEventListener('resize', handleOrientationChange);
     this.removeOrientationListener = () => {
       window.removeEventListener('resize', handleOrientationChange);
+      clearTimeout(orientationCheckTimeout);
     };
 
     // if there is a saved state, reload it
