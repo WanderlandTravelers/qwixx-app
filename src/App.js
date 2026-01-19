@@ -8,6 +8,7 @@ import StrikesRow from './components/StrikesRow';
 import { EndGameDialog, ResetDialog, HistoryDialog, SettingsDialog } from './components/dialogs';
 import { loadSettings, saveSettings } from './settings';
 import MemeDisplay from './components/MemeDisplay';
+import sixSevenSound from './assets/six-seven.wav';
 
 const scoring = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78];
 const styles = (theme) => ({
@@ -194,8 +195,7 @@ class QuixxScoreCard extends Component {
 
     // Play sound
     try {
-      // In a real app, you'd use a .mp3 or .wav file
-      const audio = new Audio('assets/tada.txt');
+      const audio = new Audio(sixSevenSound);
       audio.play().catch(error => console.error("Audio playback failed:", error));
     } catch (error) {
       console.error("Failed to play audio:", error);
