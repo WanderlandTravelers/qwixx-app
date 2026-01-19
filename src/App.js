@@ -5,7 +5,10 @@ import { withStyles } from '@mui/styles';
 import ColorRow from './components/ColorRow';
 import PortraitMode from './components/PortraitMode';
 import StrikesRow from './components/StrikesRow';
-import { EndGameDialog, ResetDialog, HistoryDialog } from './components/dialogs';
+import { EndGameDialog, ResetDialog, HistoryDialog, SettingsDialog } from './components/dialogs';
+import { loadSettings, saveSettings } from './settings';
+import MemeDisplay from './components/MemeDisplay';
+import sixSevenSound from './assets/six-seven.wav';
 
 const scoring = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78];
 const styles = (theme) => ({
@@ -42,6 +45,7 @@ const blankState = {
   endGameDialogOpen: false,
   resetDialogOpen: false,
   historyDialogOpen: false,
+  settingsDialogOpen: false,
   green: [
     new Array(12).fill(false),
     [false, false, false, false, false, false, false, false, false, false, true, false]
@@ -64,6 +68,9 @@ const blankState = {
 class QuixxScoreCard extends Component {
   state = {
     ...cloneDeep(blankState),
+    settings: loadSettings(),
+    lastClick: null,
+    showMeme: false,
     isPortrait: false, // Assume landscape initially to prevent flash
   };
 
@@ -109,8 +116,28 @@ class QuixxScoreCard extends Component {
    * @param {Boolean} isLock Whether or not the square clicked is a lock
   */
   handleClick = (color, index, isLock) => {
-    const { disabledDice, moves } = this.state;
+    const { disabledDice, moves, settings, lastClick } = this.state;
+    const now = Date.now();
     let [marks, disabled] = this.state[color];
+    const isMarking = !marks[index];
+
+    // 6-7 rule check
+    if (settings.is67RuleEnabled && !isLock && isMarking) {
+      const isAscending = ['red', 'yellow'].includes(color);
+      const sixIndex = isAscending ? 4 : 6;
+      const sevenIndex = 5; // Same for both
+      const eightIndex = isAscending ? 6 : 4;
+
+      if ((index === sixIndex || index === sevenIndex) && lastClick) {
+        const timeDiff = now - lastClick.timestamp;
+        const otherIndex = index === sixIndex ? sevenIndex : sixIndex;
+
+        if (lastClick.color === color && lastClick.index === otherIndex && timeDiff < 2000) {
+          // Rule triggered!
+          this.trigger67Rule(color, eightIndex);
+        }
+      }
+    }
 
     // if disabled do nothing
     if (disabled[index]) {
@@ -161,6 +188,46 @@ class QuixxScoreCard extends Component {
     if ((red[0].toReversed()[0] + yellow[0].toReversed()[0] + green[0].toReversed()[0] + blue[0].toReversed()[0]) > 1) {
       this.setState({endGameDialogOpen: true});
     }
+
+    if (!isLock && isMarking) {
+      this.setState({ lastClick: { color, index, timestamp: now } });
+    }
+  }
+
+  trigger67Rule = (color, eightIndex) => {
+    this.setState({ showMeme: true });
+
+    // Play sound
+    try {
+      const audio = new Audio(sixSevenSound);
+      audio.play().catch(error => console.error("Audio playback failed:", error));
+    } catch (error) {
+      console.error("Failed to play audio:", error);
+    }
+
+    setTimeout(() => {
+      this.setState({ showMeme: false });
+    }, 3000);
+
+    this.handleAutoCheck(color, eightIndex);
+  }
+
+  handleAutoCheck = (color, index) => {
+    let [marks, disabled] = this.state[color];
+
+    marks[index] = true;
+
+    const numMarks = marks.filter(value => value).length - (marks[11] && !marks[10] ? 1 : 0);
+    const score = scoring[numMarks];
+
+    disabled = disabled.map((element, i) => {
+      return (i === marks.length - 2 && numMarks < 5) || i < marks.lastIndexOf(true);
+    });
+
+    this.setState({
+      [color]: [marks, disabled],
+      [`${color}Score`]: score,
+    });
   }
 
   handleClickUndo = () => {
@@ -195,6 +262,11 @@ class QuixxScoreCard extends Component {
   handleReset = () => {
     this.setState(cloneDeep(blankState));
   }
+
+  handleSettingsChange = (settings) => {
+    this.setState({ settings });
+    saveSettings(settings);
+  };
 
   handleDelete = (i) => {
     // TODO: Use proper dialog
@@ -266,6 +338,9 @@ class QuixxScoreCard extends Component {
       endGameDialogOpen,
       resetDialogOpen,
       historyDialogOpen,
+      settingsDialogOpen,
+      settings,
+      showMeme,
     } = this.state;
 
     if (isPortrait) {
@@ -340,9 +415,19 @@ class QuixxScoreCard extends Component {
           onEndGame={handleEndGame}
           onReset={() => this.setState({resetDialogOpen: true})}
           onHistory={() => this.setState({historyDialogOpen: true})}
+          onSettings={() => this.setState({settingsDialogOpen: true})}
           onClick={(i) => this.handleClickStrikes(i)}
           totalScore={getTotalScore()}
           strikesScore={-strikesScore}
+        />
+
+        <MemeDisplay open={showMeme} onClose={() => this.setState({ showMeme: false })} />
+
+        <SettingsDialog
+          open={settingsDialogOpen}
+          onClose={() => this.setState({settingsDialogOpen: false})}
+          settings={settings}
+          onSettingsChange={this.handleSettingsChange}
         />
 
         <EndGameDialog
