@@ -69,15 +69,37 @@ class QuixxScoreCard extends Component {
 
   componentDidMount() {
     const handleOrientationChange = () => {
-      this.setState({ isPortrait: window.matchMedia('(orientation: portrait)').matches });
+      const isPortrait = window.matchMedia('(orientation: portrait)').matches;
+      // In some iOS PWA cases, matchMedia might be unreliable,
+      // so we also check window dimensions as a fallback.
+      const isPortraitFallback = window.innerHeight > window.innerWidth;
+      this.setState({ isPortrait: isPortrait || isPortraitFallback });
     };
 
     // A timeout is used to work around an iOS orientation bug on initial load
     const orientationCheckTimeout = setTimeout(handleOrientationChange, 100);
 
+    const portraitMediaQuery = window.matchMedia('(orientation: portrait)');
+
+    // Modern way to listen for orientation changes
+    if (portraitMediaQuery.addEventListener) {
+      portraitMediaQuery.addEventListener('change', handleOrientationChange);
+    } else {
+      // Fallback for older browsers
+      portraitMediaQuery.addListener(handleOrientationChange);
+    }
+
     window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('orientationchange', handleOrientationChange);
+
     this.removeOrientationListener = () => {
+      if (portraitMediaQuery.removeEventListener) {
+        portraitMediaQuery.removeEventListener('change', handleOrientationChange);
+      } else {
+        portraitMediaQuery.removeListener(handleOrientationChange);
+      }
       window.removeEventListener('resize', handleOrientationChange);
+      window.removeEventListener('orientationchange', handleOrientationChange);
       clearTimeout(orientationCheckTimeout);
     };
 
